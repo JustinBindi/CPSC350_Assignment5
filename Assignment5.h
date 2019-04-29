@@ -23,7 +23,9 @@ class BST
   public:
     BST();
     virtual ~BST();
-    void insert(T object);
+    void insertStudent(T object);
+    void insertFaculty(T object);
+
     bool contains(int value); //AKA search
     bool deleteR(int k);
     TreeNode* getSuccessor(TreeNode* d);
@@ -31,12 +33,13 @@ class BST
     TreeNode* getMin();
     TreeNode* getMax();
     bool isEmpty();
-    void printTree();
+    vector<int> printTree();
     void recPrint(TreeNode *node); //recursive print
 
   private:
     TreeNode *root;
     int value;
+    vector<int> printingVector;
 };
 
 class Student
@@ -83,7 +86,7 @@ class Faculty
     string getFacultyName();
     string getFacultyLevel();
     string getFacultyDepartment();
-    double getFacultyAdvisees();
+    vector<int> getFacultyAdvisees();
 
     string facultyName;
     string facultyLevel;
@@ -99,5 +102,14 @@ class Runner
     Runner(bool loopCondition);
     bool loop;
 
-    void Run(string fileName, string fileName2);
+    void Run(int option);
+    string line;
+    string substring;
+    vector<string> studentCreator;
+    vector<string> facultyCreator;
+    vector<Student> studentVector;
+    vector<Faculty> facultyVector;
+    vector<int> studentOrder;
+    vector<int> facultyOrder;
+    vector<int> facultyAdvisees;
 };

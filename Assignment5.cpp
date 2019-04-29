@@ -1,5 +1,6 @@
 #include <iostream>
 #include <typeinfo>
+#include <fstream>
 #include "Assignment5.h"
 
 using namespace std;
@@ -39,9 +40,10 @@ BST<T>::~BST() //default constructor
 }
 
 template <class T>
-void BST<T>::printTree()
+vector<int> BST<T>::printTree()
 {
   recPrint(root);
+  return printingVector;
 }
 
 template <class T>
@@ -52,7 +54,8 @@ void BST<T>::recPrint(TreeNode *node)
     return;
   }
    recPrint(node->left);
-   cout << node->key << endl;
+   //cout << node->key << endl;
+   printingVector.push_back(node->key);
    recPrint(node->right);
 }
 
@@ -63,18 +66,10 @@ bool BST<T>::isEmpty()
 }
 
 template <class T>
-void BST<T>::insert(T object)
+void BST<T>::insertStudent(T object)
 {
   //check if value exists, if not continue
-
-  if (typeid(object) == typeid(Student))
-  {
-    value = object.getStudentID();
-  }
-  if (typeid(object) == typeid(Faculty))
-  {
-    value = object.getFacultyID();
-  }
+  value = object.getStudentID();
 
   TreeNode *node = new TreeNode(value); //key is now set to value
 
@@ -97,7 +92,53 @@ void BST<T>::insert(T object)
 
         if (current == NULL) //found our insertion point
         {
-          current->left = node;
+          parent->left = node;
+          break;
+        }
+      }
+      else //go right
+      {
+        current = current->right;
+
+        if (current == NULL)
+        {
+          parent->right = node;
+          break;
+        }
+      }
+    }
+  }
+}
+
+template <class T>
+void BST<T>::insertFaculty(T object)
+{
+  //check if value exists, if not continue
+  value = object.getFacultyID();
+
+
+  TreeNode *node = new TreeNode(value); //key is now set to value
+
+  if (isEmpty()) //empty tree
+  {
+    root = node;
+  }
+  else //not an empty tree, need to find insertion point
+  {
+    TreeNode *current = root;
+    TreeNode *parent; //empty node
+
+    while (true)
+    {
+      parent = current;
+
+      if (value < current->key)
+      {
+        current = current->left; //going left
+
+        if (current == NULL) //found our insertion point
+        {
+          parent->left = node;
           break;
         }
       }
@@ -160,7 +201,7 @@ bool BST<T>::deleteR(int k)
   TreeNode *parent = root;
   bool isLeft = true;
 
-  while (current->key != k) //let's looky for our node
+  while (current->key != k) //let's look for our node
   {
     parent = current;
 
@@ -359,7 +400,7 @@ void Student::printSInfo()//(Student student)
   cout << "Student Level: " << studentLevel << endl;
   cout << "Student Major: " << studentMajor << endl;
   cout << "Student GPA: " << gpa << endl;
-  cout << "Student Advisor" << studentAdvisor << endl;
+  cout << "Student Advisor: " << studentAdvisor << endl;
   cout << "" << endl;
 }
 
@@ -371,6 +412,7 @@ Faculty::Faculty()
   this->facultyLevel = "";
   this->facultyDepartment = "";
   this->facultyID = 0;
+  this->facultyAdvisees;
 }
 
 Faculty::Faculty(int facultyID)
@@ -379,6 +421,7 @@ Faculty::Faculty(int facultyID)
   this->facultyLevel = "";
   this->facultyDepartment = "";
   this->facultyID = facultyID;
+  this->facultyAdvisees;
 }
 
 //faculty setters
@@ -398,6 +441,10 @@ void Faculty::setFacultyDepartment(string facultyDepartment)
 {
   this->facultyDepartment = facultyDepartment;
 }
+void Faculty::setFacultyAdvisees(vector<int> facultyAdvisees)
+{
+  this->facultyAdvisees = facultyAdvisees;
+}
 
 //faculty getters
 int Faculty::getFacultyID()
@@ -416,6 +463,10 @@ string Faculty::getFacultyDepartment()
 {
   return facultyDepartment;
 }
+vector<int> Faculty::getFacultyAdvisees()
+{
+  return facultyAdvisees;
+}
 
 //print faculty info
 void Faculty::printFInfo()//(Faculty Faculty)
@@ -423,9 +474,10 @@ void Faculty::printFInfo()//(Faculty Faculty)
   cout << "Faculty ID: " << facultyID << endl;
   cout << "Faculty Name: " << facultyName << endl;
   cout << "Faculty Level: " << facultyLevel << endl;
+  cout << "Faculty Department: " << facultyDepartment << endl;
   for (int i = 0; i < facultyAdvisees.size(); i++)
   {
-    cout << "Faculty Advisees:" << facultyAdvisees[i] << endl;
+    cout << "Faculty Advisees: " << facultyAdvisees[i] << endl;
   }
   cout << "" << endl;
 }
@@ -442,7 +494,145 @@ Runner::Runner(bool loopCondition)
   loop = loopCondition;
 }
 
-void Runner::Run(string fileName, string fileName2)
+void Runner::Run(int option)
 {
+  //string fileName = "facultyTable.txt";
+  //string fileName2 = "studentTable.txt";
+  BST<Student> masterStudent;
+  BST<Faculty> masterFaculty;
+
+  ifstream myFile ("studentTable.txt");
+  if (myFile)
+  {
+    while(getline(myFile, line))
+    {
+      //size_t found = line.find("|");
+      //if (found != string::npos)
+      //{
+        //substring = line.substr(0,found);
+        studentCreator.push_back(line);
+      //}
+    }
+  }
+  else
+  {
+    ofstream myFile ("studentTable.txt");
+  }
+
+  //Student newStudent;
+  for (int i = 0; i < studentCreator.size(); i++)//<<<<<<<<<<<
+  {
+    cout << studentCreator[i] << endl;
+  }
+
+  int size = studentCreator.size()/6;
+
+  for (int i = 0; i < size; i++)
+  {
+    Student newStudent;
+    newStudent.setStudentID(stoi(studentCreator[0]));
+    studentCreator.erase(studentCreator.begin());
+    newStudent.setStudentName(studentCreator[0]);
+    studentCreator.erase(studentCreator.begin());
+    newStudent.setStudentLevel(studentCreator[0]);
+    studentCreator.erase(studentCreator.begin());
+    newStudent.setStudentMajor(studentCreator[0]);
+    studentCreator.erase(studentCreator.begin());
+    newStudent.setStudentGPA(stod(studentCreator[0]));
+    studentCreator.erase(studentCreator.begin());
+    newStudent.setStudentAdvisor(stoi(studentCreator[0]));
+    studentCreator.erase(studentCreator.begin());
+
+    masterStudent.insertStudent(newStudent);
+    studentVector.push_back(newStudent);
+  }
+  myFile.close();
+
+  ifstream myFile2 ("facultyTable.txt");
+  if (myFile2)
+  {
+    while(getline(myFile2, line))
+    {
+      //size_t found = line.find("|");
+      //if (found != string::npos)
+      //{
+        //substring = line.substr(0,found);
+        facultyCreator.push_back(line);
+      //}
+    }
+  }
+  else
+  {
+    ofstream myFile2 ("facultyTable.txt");
+  }
+
+  for (int i = 0; i < facultyCreator.size(); i++)//<<<<<<<
+  {
+    cout << facultyCreator[i] << endl;
+  }
+
+  int size2 = facultyCreator.size()/5;
+
+  for (int i = 0; i < size2; i++)
+  {
+    Faculty newFaculty;
+    newFaculty.setFacultyID(stoi(facultyCreator[0]));
+      facultyCreator.erase(facultyCreator.begin());
+    newFaculty.setFacultyName(facultyCreator[0]);
+      facultyCreator.erase(facultyCreator.begin());
+    newFaculty.setFacultyLevel(facultyCreator[0]);
+      facultyCreator.erase(facultyCreator.begin());
+    newFaculty.setFacultyDepartment(facultyCreator[0]);
+      facultyCreator.erase(facultyCreator.begin());
+    int adviseesListLength = (stoi(facultyCreator[0]));
+      facultyCreator.erase(facultyCreator.begin());
+
+    for (int i = 0; i < adviseesListLength; i++)
+    {
+      facultyAdvisees.push_back(stoi(facultyCreator[0]));
+      facultyCreator.erase(facultyCreator.begin());
+    }
+    newFaculty.setFacultyAdvisees(facultyAdvisees);
+
+    masterFaculty.insertFaculty(newFaculty);
+    facultyVector.push_back(newFaculty);
+  }
+  myFile2.close();
+
+  if (option == 1)
+  {
+    studentOrder = masterStudent.printTree();
+
+    while (studentOrder.size() != 0)
+    {
+      for (int i = 0; i < studentVector.size(); i++)
+      {
+        if (studentVector[i].getStudentID() == studentOrder[0])
+        {
+          studentVector[i].printSInfo();
+          studentOrder.erase(studentOrder.begin());
+        }
+      }
+    }
+  }
+
+  if (option == 2)
+  {
+    facultyOrder = masterFaculty.printTree();
+
+    while (facultyOrder.size() != 0)
+    {
+      for (int i = 0; i < facultyVector.size(); i++)
+      {
+        if (facultyVector[i].getFacultyID() == facultyOrder[0])
+        {
+          facultyVector[i].printFInfo();
+          facultyOrder.erase(facultyOrder.begin());
+        }
+      }
+    }
+  }
+
+  
 
 }

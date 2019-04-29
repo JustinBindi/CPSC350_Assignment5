@@ -1,0 +1,12 @@
+2
+Joseph Smith
+Sophomore
+Accounting
+3.49
+3
+7
+Mary Jones
+Freshman
+Data Analytics
+2.98
+3

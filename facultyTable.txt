@@ -2,6 +2,5 @@
 Mr. Smith
 Lecturer
 Computer Science
+1
 2
-2
-7

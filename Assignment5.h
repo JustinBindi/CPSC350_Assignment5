@@ -3,20 +3,20 @@
 
 using namespace std;
 
+//Node Class
 class TreeNode
 {
 public:
   TreeNode();
   TreeNode(int k);
-  virtual ~TreeNode(); //why a virtual destructor
+  virtual ~TreeNode();
 
   int key;
   TreeNode *left; //left child
   TreeNode *right; //right child
 };
 
-//////let's define our Tree Class//////
-
+//Tree Class
 template <class T>
 class BST
 {
@@ -42,6 +42,7 @@ class BST
     vector<int> printingVector;
 };
 
+//Student Class
 class Student
 {
   public:
@@ -70,6 +71,7 @@ class Student
     int studentAdvisor;
 };
 
+//Faculty Class
 class Faculty
 {
   public:
@@ -95,16 +97,24 @@ class Faculty
     vector<int> facultyAdvisees;
 };
 
+//Class that runs the different options
 class Runner
 {
   public:
     Runner();
-    Runner(bool loopCondition);
+    Runner(int rollbacksAvailable);
     bool loop;
 
     void Run(int option);
     string line;
     string substring;
+    int rollbacksAvailable;
+    vector<string> RollBack1;
+    vector<string> RollBack2;
+    vector<string> RollBack3;
+    vector<string> RollBack4;
+    vector<string> RollBack5;
+    vector<string> rollbackFiles;
     vector<string> studentCreator;
     vector<string> facultyCreator;
     vector<Student> studentVector;
